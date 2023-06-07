@@ -15,17 +15,25 @@ export default async function handler(req, res) {
 }
 
 const obtenerInstAsilo = async (req, res) => {
-    const { id } = req.query;
-    const [result] = await pool.query('SELECT * FROM InstitucionAsilo WHERE ID = ?', [id]);
-    //console.log(result);
-    return res.status(200).json(result[0]);
-    //return res.status(200).json(id)
+    try {
+        const { id } = req.query;
+        const [result] = await pool.query('SELECT * FROM InstitucionAsilo WHERE ID = ?', [id]);
+        //console.log(result);
+        return res.status(200).json(result[0]);
+        //return res.status(200).json(id)
+    } catch (error) {
+        return res.status(500).json({message: error.message});
+    }
 };
 
 const eliminarInstAsilo = async (req, res) => {
-    const { id } = req.query;
-    const result = await pool.query('DELETE FROM InstitucionAsilo WHERE ID = ?', [id]);
-    return res.status(204).json();
+    try {
+        const { id } = req.query;
+        await pool.query('DELETE FROM InstitucionAsilo WHERE ID = ?', [id]);
+        return res.status(204).json();
+    } catch (error) {
+        return res.status(500).json({message: error.message});
+    }
 };
 
 const actualizarInstAsilo = async (req, res) => {
@@ -36,6 +44,6 @@ const actualizarInstAsilo = async (req, res) => {
         await pool.query('UPDATE InstitucionAsilo SET ? WHERE ID = ?', [req.body, id]);
         return res.status(204).json();
     } catch (error) {
-        console.error(error.message);
+        return res.status(500).json({message: error.message});
     }
 };

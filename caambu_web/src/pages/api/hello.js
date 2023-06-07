@@ -1,4 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+// CONFIRMACION DE CONEXION
 
 import { pool } from "../../../config/db";
 

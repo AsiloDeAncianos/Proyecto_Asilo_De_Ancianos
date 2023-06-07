@@ -13,9 +13,14 @@ export default async function handler(req, res) {
 }
 
 const obtenerInstAsilo = async (req, res) => {
-    const [result] = await pool.query('SELECT * FROM InstitucionAsilo');
-    console.log(result);
-    return res.status(200).json(result);
+    try {
+        const [result] = await pool.query('SELECT * FROM InstitucionAsilo');
+        console.log(result);
+        return res.status(200).json(result);
+    } catch (error) {
+        //console.log(error);
+        return res.status(500).json({ error });
+    }
 };
 
 const guardarInstAsilo = async (req, res) => {
@@ -24,18 +29,22 @@ const guardarInstAsilo = async (req, res) => {
 
     const {Nombre, NIT, NombreRepresentantePrincipal, Email, Telefono, Celular, Direccion, Localizacion} = req.body;
 
-    const [result] = await pool.query('INSERT INTO InstitucionAsilo SET ?',{
-        Nombre,
-        NIT,
-        NombreRepresentantePrincipal,
-        Email,
-        Telefono,
-        Celular,
-        Direccion,
-        Localizacion
-    });
-
-    console.log(result);
-
-    return res.status(200).json('Creando institución:' + {Nombre, NIT, NombreRepresentantePrincipal, Email, Telefono, Celular, Direccion, Localizacion, id: result.insertId});
+    try {
+        const [result] = await pool.query('INSERT INTO InstitucionAsilo SET ?',{
+            Nombre,
+            NIT,
+            NombreRepresentantePrincipal,
+            Email,
+            Telefono,
+            Celular,
+            Direccion,
+            Localizacion
+        });
+    
+        console.log(result);
+    
+        return res.status(200).json('Creando institución:' + {Nombre, NIT, NombreRepresentantePrincipal, Email, Telefono, Celular, Direccion, Localizacion, id: result.insertId});
+    } catch (error) {
+        return res.status(500).json({message: error.messa});
+    }
 };

@@ -1,2 +1,2 @@
-import NewPage from "../../new";
-export default NewPage;
+import EditarInstAsilo from "../../institucionAsiloCrear";
+export default EditarInstAsilo;

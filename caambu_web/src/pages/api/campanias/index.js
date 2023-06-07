@@ -12,9 +12,15 @@ export default async function handler(req, res) {
 }
 
 const obtenerCampania = async (req, res) => {
-    const [result] = await pool.query('SELECT * FROM Campania');
-    console.log(result);
-    return res.status(200).json(result);
+    try {
+        const [result] = await pool.query('SELECT * FROM Campania');
+        console.log(result);
+        return res.status(200).json(result);
+    } catch (error) {
+        return res.status(500).json({ error });
+    }
+
+    
 };
 
 const guardarCampania = async (req, res) => {
@@ -23,16 +29,20 @@ const guardarCampania = async (req, res) => {
 
     const {Nombre, Requerimiento, Imagenes, FechaInicio, FechaCierre, InstitucionAsiloID} = req.body;
 
-    const [result] = await pool.query('INSERT INTO Campania SET ?',{
-        Nombre,
-        Requerimiento,
-        Imagenes,
-        FechaInicio,
-        FechaCierre,
-        InstitucionAsiloID
-    });
+    try {
+        const [result] = await pool.query('INSERT INTO Campania SET ?',{
+            Nombre,
+            Requerimiento,
+            Imagenes,
+            FechaInicio,
+            FechaCierre,
+            InstitucionAsiloID
+        });
+    
+        console.log(result);
+        return res.status(200).json('Creando campaña:' + {Nombre, Requerimiento, Imagenes, FechaInicio, FechaCierre, InstitucionAsiloID, id: result.insertId});
 
-    console.log(result);
-
-    return res.status(200).json('Creando campaña:' + {Nombre, Requerimiento, Imagenes, FechaInicio, FechaCierre, InstitucionAsiloID, id: result.insertId});
+    } catch (error) {
+        return res.status(500).json({message: error.messa});
+    }
 };
