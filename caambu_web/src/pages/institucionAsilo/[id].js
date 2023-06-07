@@ -2,7 +2,7 @@ import axios from 'axios';
 import {Layout} from '../../components/Layout';
 import {useRouter} from 'next/router';
 
-function InstAsiloView({instAsilo}) {
+function InstAsiloPageView({instAsilo}) {
 
     const router = useRouter();
 
@@ -21,8 +21,12 @@ function InstAsiloView({instAsilo}) {
         <p className='text-gray-700'>{instAsilo.NombreRepresentantePrincipal}</p>
 
         <button 
-            className='bg-red-500 hover:bg-red-700 text-white px-3 py-2' 
+            className='bg-red-500 hover:bg-red-700 text-white px-3 py-2 rounded' 
             onClick={() => handleDelete(instAsilo.ID)}>Eliminar</button>
+
+        <button
+            className='bg-yellow-500 hover:bg-yellow-700 text-white px-5 py-2 rounded ml-2'
+            onClick={() => router.push("/institucionAsilo/edit/" + instAsilo.ID)}>Editar</button>
     </Layout>
   )
 }
@@ -41,4 +45,4 @@ export const getServerSideProps = async (context) => {
     };
 };
 
-export default InstAsiloView;
+export default InstAsiloPageView;

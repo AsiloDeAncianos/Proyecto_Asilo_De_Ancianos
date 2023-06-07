@@ -19,9 +19,9 @@ function HomePage({instAsilos, campanias}) {
           {instAsilos.map((instAsilo) => (
             <Link href={`/institucionAsilo/${instAsilo.ID}`} key={instAsilo.ID}>
               <div className="border border-gray-200 shadow-md p-6">
-                <h1>{instAsilo.Nombre}</h1>
-                <p>{instAsilo.NIT}</p>
-                <p>{instAsilo.NombreRepresentantePrincipal}</p>
+                <h1 className="text-gray-700">{instAsilo.Nombre}</h1>
+                <p className="text-gray-700">{instAsilo.NIT}</p>
+                <p className="text-gray-700">{instAsilo.NombreRepresentantePrincipal}</p>
               </div>
             </Link>
           ))}
