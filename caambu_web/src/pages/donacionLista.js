@@ -20,15 +20,39 @@ function ListaDonaciones() {
       loadData();
   }, [])
 
-  const donacionFiltrada = donacionAll.filter(donacion =>
+  const donacionFiltrada = donacionAll.filter((donacion) =>
     benefactorAll.some(benefactor => benefactor.id === donacion.Benefactor)
   );
 
   const donacionesRecibidas = donacionFiltrada.filter((donacion) => donacion.RecogidaPorAsilo === true);
 
-  const formatearFecha = (date) => {
-    return format(new Date(date), "yyyy-MM-dd");
+  //Calculando el rango de fechas
+  const obtenerMinMaxFechas = (fechas) => {
+    const fechasOrdenadas = fechas.sort((a, b) => new Date(a) - new Date(b));
+    const minFecha = fechasOrdenadas[0];
+    const maxFecha = fechasOrdenadas[fechasOrdenadas.length - 1];
+    return { minFecha, maxFecha };
   };
+
+  const fechasDonaciones = donacionesRecibidas.map((donacion) => donacion.FechaRecoleccion);
+  const { minFecha, maxFecha } = obtenerMinMaxFechas(fechasDonaciones);
+
+  //Calculando la cantidad de donaciones
+  const cantidadDonaciones = donacionesRecibidas.length;
+
+  //Calculando el/los benefactor(es) mas frecuentes
+  const benefactoresFrecuentes = donacionesRecibidas.reduce((freqMap, donacion) => {
+    const benefactor = benefactorAll.find((benefactor) => benefactor.id === donacion.Benefactor);
+    if (benefactor) {
+      freqMap[benefactor.NombreCompleto] = (freqMap[benefactor.NombreCompleto] || 0) + 1;
+    }
+    return freqMap;
+  }, {});
+
+  const maxDonaciones = Math.max(...Object.values(benefactoresFrecuentes));
+  const benefactoresMasFrecuentes = Object.keys(benefactoresFrecuentes).filter(
+    (nombre) => benefactoresFrecuentes[nombre] === maxDonaciones
+  );
 
   return (
     <>
@@ -50,7 +74,7 @@ function ListaDonaciones() {
 
               return (
                 <tr key={donacion.ID}>
-                  <td className="border border-gray-700 p-3">{formatearFecha(donacion.FechaRecoleccion)}</td>
+                  <td className="border border-gray-700 p-3">{donacion.FechaRecoleccion}</td>
                   <td className="border border-gray-700 p-3">{nombreBenefactor}</td>
                 </tr>
               );
@@ -59,13 +83,16 @@ function ListaDonaciones() {
           </table>
 
           <div className="my-5">
-            <label htmlFor='lblRango' className='text-gray-700'><b>Rango de fechas:</b></label>
+            <label htmlFor='lblRango' className='text-gray-700'><b>Rango de fechas: </b>
+              {minFecha} - {maxFecha}</label>
           </div>
           <div className="my-5">
-            <label htmlFor='lblCantDonaciones' className='text-gray-700'><b>Cantidad de donaciones:</b></label>
+            <label htmlFor='lblCantDonaciones' className='text-gray-700'><b>Cantidad de donaciones: </b>
+            {cantidadDonaciones}</label>
           </div>
           <div className="my-5">
-            <label htmlFor='lblBenefactor' className='text-gray-700'><b>Benefactor más frecuente:</b></label>
+            <label htmlFor='lblBenefactor' className='text-gray-700'><b>Benefactor(es) más frecuente(s): </b> 
+              {benefactoresMasFrecuentes.join(", ")}</label>
           </div>
 
           <button 

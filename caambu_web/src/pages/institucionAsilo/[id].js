@@ -34,10 +34,10 @@ function InstAsiloPageView({instAsilo}) {
 
             <button 
                 className='bg-red-500 hover:bg-red-700 text-white px-3 py-2 rounded my-5' 
-                onClick={() => handleDelete(instAsilo.id)}>Eliminar</button>
+                onClick={() => handleDelete(instAsilo.id)} style={{display:'none'}}>Eliminar</button>
 
             <button
-                className='bg-yellow-500 hover:bg-yellow-700 text-white px-5 py-2 rounded ml-2'
+                className='bg-yellow-500 hover:bg-yellow-700 text-white px-5 py-2 rounded ml-2 my-5'
                 onClick={() => router.push("/institucionAsilo/edit/" + instAsilo.id)}>Editar</button>
         </Layout>
     </>

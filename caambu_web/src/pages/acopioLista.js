@@ -1,11 +1,10 @@
-import axios from "axios";
 import {Layout} from "../components/Layout";
 import { format } from "date-fns";
 import {useRouter} from 'next/router';
 import { useEffect, useState} from 'react';
 import { getAllAcopios, getAcopiosById, getAllDonacion } from "./api/backend";
 
-function ListaAcopios({acopios}) {
+function ListaAcopios() {
 
   const router = useRouter();
 
@@ -33,11 +32,22 @@ function ListaAcopios({acopios}) {
     }
   }
 
+  console.log('---------------------');
+  console.log(donacionAll);
+  console.log('---------------------');
+
+  // const donacionesEnEspera1 = donacionAll.filter((donacion) => donacion.RecogidaPorAsilo === false);
+  // const donacionesEnEspera2 = donacionesEnEspera1.filter((donacion) => donacion.RecibidoPorAsilo === false);
+
   const donacionesEnEspera = donacionAll.filter((donacion) => donacion.RecogidaPorAsilo === false && donacion.RecibidoPorAsilo === false);
 
-  const recojosPorRealizar = acopioAll.filter(acopio => 
-    donacionesEnEspera.some(donacion => donacion.Campania === acopio.Campania)
-  );
+  // const recojosPorRealizar = acopioAll.filter(acopio => 
+  //   donacionAll.some(donacion => donacion.Campania === acopio.Campania)
+  // );
+  
+  console.log('*********************');
+  //console.log(recojosPorRealizar);
+  console.log('*********************');
 
   const formatearFecha = (date) => {
     return format(new Date(date), "yyyy-MM-dd");
@@ -58,7 +68,7 @@ function ListaAcopios({acopios}) {
               </tr>
             </thead>
             <tbody>
-              {recojosPorRealizar.map((acopio) => (
+              {donacionesEnEspera.map((acopio) => (
                 <tr key={acopio.id}>
                   <td className="border border-gray-700 p-3">{formatearFecha(acopio.FechaRecoleccion)}</td>
                   <td className="border border-gray-700 p-3">
@@ -78,17 +88,5 @@ function ListaAcopios({acopios}) {
     </>
   );
 }
-
-// export const getServerSideProps = async context => {
-//   const {data: donacion} = await axios.get(
-//     'http://localhost:3000/api/donaciones'
-//   )
-
-//   return {
-//     props: {
-//         donaciones,
-//     },
-//   };
-// };
 
 export default ListaAcopios
