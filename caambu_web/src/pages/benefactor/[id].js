@@ -24,6 +24,14 @@ function BenefactorLista({campania}) {
     donacionesFiltradas.some(donacion => donacion.Benefactor === benefactor.id)
   );
 
+  const obtenerEstadoDonacion = (donacion) => {
+    if (donacion.RecogidaPorAsilo && donacion.RecibidoPorAsilo) {
+      return 'Recibida';
+    } else {
+      return 'No recibida';
+    }
+  };
+
   return (
     <>
         <Layout>
@@ -35,9 +43,17 @@ function BenefactorLista({campania}) {
 
           {benefactoresFiltrados.map((benefactor) => (
             <div className="border border-gray-200 shadow-md p-6 mx-12 my-3">
-              <h1 className="text-gray-700"><b>Nombre:</b></h1>
+              <h1 className="text-gray-700"><b>Nombre: </b></h1>
               <p className="text-gray-700">
                 {benefactor.Anonimo ? 'Donacion Anonima' : benefactor.NombreCompleto}</p>
+              <h1 className="text-gray-700"><b>Estado de donacion: </b></h1>
+              <p className="text-gray-700">
+                {donacionesFiltradas.map((donacion) => (
+                  donacion.Benefactor === benefactor.id && (
+                    <span key={donacion.id}>{obtenerEstadoDonacion(donacion)}</span>
+                  )
+                ))}
+              </p>
             </div>
           ))}
         </Layout>

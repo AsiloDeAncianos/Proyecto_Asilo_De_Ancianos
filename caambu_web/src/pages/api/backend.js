@@ -55,7 +55,9 @@ export const updateCampania= (id, campania) => api.put(`campania/${id}/`, campan
 
 export const getAllDonacion = () => api.get('donacion/');
 
-export const getDonacion = (id) => api.get(`donacion/${id}/`);
+export const getDonacionById = (id) => api.get(`donacion/${id}/`);
+
+export const updateDonacion= (id, donacion) => api.put(`donacion/${id}/`, donacion);
 
 //Recoger
 

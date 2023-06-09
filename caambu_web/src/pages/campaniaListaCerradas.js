@@ -45,7 +45,6 @@ function ListaCerradasCampanias() {
               <tr className="bg-gray-200">
                 <th className="border border-gray-700 p-3">Nombre de Campaña</th>
                 <th className="border border-gray-700 p-3">Benefactores</th>
-                <th className="border border-gray-700 p-3">Estado de donaciones</th>
               </tr>
             </thead>
             <tbody>
@@ -58,7 +57,6 @@ function ListaCerradasCampanias() {
                     </Link> */}
                     <button onClick={() => handleBenefactors(campania.id)} className="text-white bg-blue-500 hover:bg-blue-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline">Ver despliegue</button>
                   </td>
-                  <td className="border border-gray-700 p-3">recibidas</td>
                 </tr>
               ))}
             </tbody>

@@ -2,7 +2,7 @@ import {Layout} from "../components/Layout";
 import { format } from "date-fns";
 import {useRouter} from 'next/router';
 import { useEffect, useState} from 'react';
-import { getAllAcopios, getAcopiosById, getAllDonacion } from "./api/backend";
+import { getAllAcopios, updateDonacion, getAllDonacion, getDonacionById } from "./api/backend";
 
 function ListaAcopios() {
 
@@ -24,30 +24,33 @@ function ListaAcopios() {
 
   const handleBenefactors = async (id) => {
     try {
-      const response = await getAcopiosById(id);
-      console.log(response.data.id);
       router.push(`/acopio/${id}`);
     } catch (error) {
       console.error('Error fetching campaign details:', error);
     }
   }
 
-  console.log('---------------------');
-  console.log(donacionAll);
-  console.log('---------------------');
-
-  // const donacionesEnEspera1 = donacionAll.filter((donacion) => donacion.RecogidaPorAsilo === false);
-  // const donacionesEnEspera2 = donacionesEnEspera1.filter((donacion) => donacion.RecibidoPorAsilo === false);
+  const handleState = async (id) => {
+    try {
+      const { data } = await getDonacionById(id);
+      const updatedDonacion = {
+        ...data,
+        RecogidaPorAsilo: true,
+        RecibidoPorAsilo: true
+      };
+  
+      await updateDonacion(id, updatedDonacion);
+      console.log(updatedDonacion);
+      window.location.reload()
+  
+    } catch (error) {
+      console.error('Error updating campaign state:', error);
+    }
+  }
 
   const donacionesEnEspera = donacionAll.filter((donacion) => donacion.RecogidaPorAsilo === false && donacion.RecibidoPorAsilo === false);
 
-  // const recojosPorRealizar = acopioAll.filter(acopio => 
-  //   donacionAll.some(donacion => donacion.Campania === acopio.Campania)
-  // );
-  
-  console.log('*********************');
-  //console.log(recojosPorRealizar);
-  console.log('*********************');
+  console.log(donacionesEnEspera);
 
   const formatearFecha = (date) => {
     return format(new Date(date), "yyyy-MM-dd");
@@ -69,16 +72,16 @@ function ListaAcopios() {
             </thead>
             <tbody>
               {donacionesEnEspera.map((acopio) => (
-                <tr key={acopio.id}>
+                <tr>
                   <td className="border border-gray-700 p-3">{formatearFecha(acopio.FechaRecoleccion)}</td>
                   <td className="border border-gray-700 p-3">
-                    <button onClick={() => handleBenefactors(acopio.id)} className="text-white bg-gray-500 hover:bg-gray-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline">Ver</button>
+                    <button onClick={() => handleBenefactors(acopio.Campania)} className="text-white bg-gray-500 hover:bg-gray-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline">Ver</button>
                   </td>
                   <td className="border border-gray-700 p-3">
                     <button className="text-white bg-blue-500 hover:bg-blue-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline">Enviar</button>
                   </td>
                   <td className="border border-gray-700 p-3">
-                    <button className="text-white bg-green-500 hover:bg-green-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline">Recibido</button>
+                    <button onClick={() => handleState(acopio.id)} className="text-white bg-green-500 hover:bg-green-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline">Recibido</button>
                   </td>
                 </tr>
               ))}
