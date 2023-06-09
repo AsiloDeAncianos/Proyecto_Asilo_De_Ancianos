@@ -1,0 +1,58 @@
+<form onSubmit={onSubmit}>
+            <input id='Nombre' type='text' {...register("Nombre", {required:true})}></input> 
+            <label htmlFor='Nombre'>Nombre</label>   
+            <br>
+            </br>
+
+            <input id='NIT' type='text' {...register("NIT", {required:true})}></input> 
+            <label htmlFor='NIT'>NIT</label> 
+            <br>
+            </br>
+
+            <input id='NRP' type='text' {...register("NombreRepresentantePrincipal", {required:true})}></input> 
+            <label htmlFor='NRP'>Nombre Representante Principal</label> 
+            <br>
+            </br>
+
+            <input id='Email' type='text' {...register("Email", {required:true})}></input> 
+            <label htmlFor='Email'>Email</label>   
+            <br>
+            </br>
+
+            <input id='Telefono' type='text' {...register("Telefono", {required:true})}></input> 
+            <label htmlFor='Telefono'>Telefono</label>   
+            <br>
+            </br>
+
+            <input id='Celular' type='text' {...register("Celular", {required:true})}></input> 
+            <label htmlFor='Celular'>Celular</label>   
+            <br>
+            </br>
+
+            <input id='Direccion' type='text' {...register("Direccion", {required:true})}></input> 
+            <label htmlFor='Direccion'>Direccion</label>  
+            <br>
+            </br>
+
+            <input id='Localizacion' type='text' {...register("Localizacion", {required:true})}></input> 
+            <label htmlFor='Localizacion'>Localizacion</label>   
+            <br>
+            </br>
+
+            <button type="submit">Registrar</button>
+             
+
+        </form
+
+import {useForm} from 'react-hook-form'
+
+const {register, handleSubmit} = useForm();
+
+const onSubmit = handleSubmit(async data => {
+    const res = await createInstitucion(data)
+    //console.log(res);
+
+    if(res.status === 400){
+        alert("Ha ocurrido un error al registrar la institucion")
+    }      
+})

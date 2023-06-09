@@ -21,7 +21,7 @@ CREATE TABLE InstitucionAsilo (
     Celular VARCHAR(20) NOT NULL,
     Direccion VARCHAR(200) NOT NULL,
     Localizacion VARCHAR(100) NOT NULL
-);
+);++++++++++++++++++++++++++++++++
 
 CREATE TABLE Campania (
     ID INT AUTO_INCREMENT PRIMARY KEY,

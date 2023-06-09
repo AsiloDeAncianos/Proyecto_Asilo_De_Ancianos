@@ -1,8 +1,57 @@
-import axios from "axios";
 import {Layout} from "../components/Layout";
 import Link from "next/link";
+import { format } from "date-fns";
+import {useRouter} from 'next/router';
+import { getAllCampania, getCampaniaById, updateCampania } from './api/backend';
+import { useEffect, useState} from 'react';
 
-function ListaVigentesCampanias({campanias}) {
+function ListaVigentesCampanias() {
+
+  const router = useRouter();
+
+  const [campaniaAll, setCampania] = useState([]);
+
+  useEffect(() => {
+      async function loadData(){
+        const res = await getAllCampania();
+        setCampania(res.data);
+      }
+      loadData();
+  }, [])
+
+  const campaniasVigentes = campaniaAll.filter((campania) => campania.Estado === true);
+
+  const handleEditView = async (id) => {
+    try {
+      const response = await getCampaniaById(id);
+      console.log(response.data.id);
+      router.push(`/campania/edit/${id}`);
+
+    } catch (error) {
+      console.error('Error fetching campaign details:', error);
+    }
+  };
+
+  const handleState = async (id) => {
+    try {
+      const { data } = await getCampaniaById(id);
+      const updatedCampania = {
+        ...data,
+        Estado: false
+      };
+  
+      await updateCampania(id, updatedCampania);
+      console.log(updatedCampania);
+      router.push('/campaniaListaCerradas');
+  
+    } catch (error) {
+      console.error('Error updating campaign state:', error);
+    }
+  };
+
+  const formatearFecha = (date) => {
+    return format(new Date(date), "yyyy-MM-dd");
+  };
 
   return (
     <>
@@ -25,23 +74,22 @@ function ListaVigentesCampanias({campanias}) {
               </tr>
             </thead>
             <tbody>
-              {campanias.map((campania) => (
-                <tr key={campania.ID}>
+              {campaniasVigentes.map((campania) => (
+                <tr key={campania.id}>
                   <td className="border border-gray-700 p-3">{campania.Nombre}</td>
-                  <td className="border border-gray-700 p-3">{campania.FechaInicio}</td>
-                  <td className="border border-gray-700 p-3">{campania.FechaCierre}</td>
+                  <td className="border border-gray-700 p-3">{formatearFecha(campania.FechaInicio)}</td>
+                  <td className="border border-gray-700 p-3">{formatearFecha(campania.FechaCierre)}</td>
                   <td className="border border-gray-700 p-3">
-                    <Link href={`/campania/${campania.ID}`}>
+                    <Link href={`/campania/${campania.id}`} key={campania.id}>
                       <button className="text-white bg-blue-500 hover:bg-blue-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline">Ver</button>
                     </Link>
                   </td>
                   <td className="border border-gray-700 p-3">
-                    <Link href={`/editarCampania/${campania.ID}`}>
-                      <button className="text-white bg-green-500 hover:bg-green-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline">Editar</button>
-                    </Link>
+                    <button onClick={() => handleEditView(campania.id)} className="text-white bg-yellow-500 hover:bg-yellow-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline">Editar</button>
                   </td>
                   <td className="border border-gray-700 p-3">
-                    <button className="text-white bg-red-500 hover:bg-red-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline">Cerrar</button>
+                    <button className="text-white bg-red-500 hover:bg-red-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                    onClick={() => handleState(campania.id)}>Cerrar</button>
                   </td>
                 </tr>
               ))}
@@ -51,17 +99,5 @@ function ListaVigentesCampanias({campanias}) {
     </>
   );
 }
-
-export const getServerSideProps = async context => {
-  const {data: campanias} = await axios.get(
-    'http://localhost:3000/api/campanias'
-  )
-
-  return {
-    props: {
-        campanias,
-    },
-  };
-};
 
 export default ListaVigentesCampanias

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from "next/link";
+import { createInstitucion, updateInstitucion, getInstitucionById } from '@/pages/api/backend';
 ;
 
 export function InstAsiloForm() {
@@ -20,24 +21,22 @@ export function InstAsiloForm() {
     const router = useRouter();
 
     // console.log(router.query); demuestra que el enrutador es pieza clave al reutilizar componentes
+    // console.log(router.query);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // console.log('creando una campania')
 
         try {
             if (router.query.id) {
-                console.log('updating');
-                await axios.put('/api/instAsilos/' + router.query.id, instAsilo);
-                //console.log(res); (const res = await...)
+                await updateInstitucion(router.query.id, instAsilo);
             } else {
-                await axios.post('/api/instAsilos', instAsilo);
+                await createInstitucion(instAsilo);
             }
-    
+
             router.push('/institucionAsiloLista');
 
         } catch (error) {
-           console.log(error.response.data.message); 
+           //console.log(error.response.data.message); 
         }
     };
 
@@ -48,7 +47,7 @@ export function InstAsiloForm() {
     useEffect(() => {
 
         const getInstAsilo = async () => {
-            const {data} = await axios.get('/api/instAsilos/' + router.query.id);
+            const {data} = await getInstitucionById(router.query.id);
             //console.log(res);
             setInstAsilo({
                 Nombre: data.Nombre, 
@@ -58,7 +57,8 @@ export function InstAsiloForm() {
                 Telefono: data.Telefono, 
                 Celular: data.Celular, 
                 Direccion: data.Direccion, 
-                Localizacion: data.Localizacion
+                Localizacion: data.Localizacion,
+                Estado: data.Estado,
             });
             //setInstAsilo(data)
         };
@@ -128,3 +128,4 @@ export function InstAsiloForm() {
         </div>
     );
 }
+

@@ -2,6 +2,7 @@ import axios from 'axios';
 import {Layout} from '../../components/Layout';
 import {useRouter} from 'next/router';
 import Link from "next/link";
+import { deleteCampania, getCampaniaById } from '../../pages/api/backend';
 
 /* VISTA DE UNA SOLA CAMPAÑA */
 
@@ -11,10 +12,10 @@ function CampaniaPageView({campania}) {
 
     const handleDelete = async (id) => {
         try {
-            await axios.delete('/api/campanias/' + id)
+            await deleteCampania(id);
             router.push('/campaniaListaCerradas');
         } catch (error) {
-            console.log(error.response.data.message); 
+            //console.log(error.response.data.message); 
         }
     };
 
@@ -33,11 +34,11 @@ function CampaniaPageView({campania}) {
 
             <button 
                 className='bg-red-500 hover:bg-red-700 text-white px-3 py-2 rounded my-5' 
-                onClick={() => handleDelete(campania.ID)}>Eliminar</button>
+                onClick={() => handleDelete(campania.id)}>Eliminar</button>
 
             <button
                 className='bg-yellow-500 hover:bg-yellow-700 text-white px-5 py-2 rounded ml-2'
-                onClick={() => router.push("/campania/edit/" + campania.ID)}>Editar</button>
+                onClick={() => router.push("/campania/edit/" + campania.id)}>Editar</button>
         </Layout>
     </>
   )
@@ -45,9 +46,7 @@ function CampaniaPageView({campania}) {
 
 export const getServerSideProps = async (context) => {
 
-    const {data: campania} = await axios.get(
-        'http://localhost:3000/api/campanias/' + context.query.id
-    );
+    const {data: campania} = await getCampaniaById(context.query.id);
 
     return {
         props: {
