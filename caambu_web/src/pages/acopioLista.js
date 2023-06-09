@@ -1,14 +1,47 @@
 import axios from "axios";
 import {Layout} from "../components/Layout";
 import { format } from "date-fns";
+import {useRouter} from 'next/router';
+import { useEffect, useState} from 'react';
+import { getAllAcopios, getAcopiosById, getAllDonacion } from "./api/backend";
 
 function ListaAcopios({acopios}) {
+
+  const router = useRouter();
+
+  const [donacionAll, setDonacionAll] = useState([]);
+  const [acopioAll, setAcopio] = useState([]);
+
+  useEffect(() => {
+      async function loadData(){
+          const A_res = await getAllAcopios();
+          const D_res = await getAllDonacion();
+
+          setAcopio(A_res.data);
+          setDonacionAll(D_res.data);
+      }
+      loadData();
+  }, [])
+
+  const handleBenefactors = async (id) => {
+    try {
+      const response = await getAcopiosById(id);
+      console.log(response.data.id);
+      router.push(`/acopio/${id}`);
+    } catch (error) {
+      console.error('Error fetching campaign details:', error);
+    }
+  }
+
+  const donacionesEnEspera = donacionAll.filter((donacion) => donacion.RecogidaPorAsilo === false && donacion.RecibidoPorAsilo === false);
+
+  const recojosPorRealizar = acopioAll.filter(acopio => 
+    donacionesEnEspera.some(donacion => donacion.Campania === acopio.Campania)
+  );
 
   const formatearFecha = (date) => {
     return format(new Date(date), "yyyy-MM-dd");
   };
-
-  //const acopiosRealizar = acopios.filter((acopio) => acopio.RecogidaPorAsilo === 1);
 
   return (
     <>
@@ -25,16 +58,11 @@ function ListaAcopios({acopios}) {
               </tr>
             </thead>
             <tbody>
-              {/* {donacionesRecibidas.map((donacion) => (
-                // <tr key={donacion.ID}>
-                //   <td className="border border-gray-700 p-3">{formatearFecha(donacion.FechaRecoleccion)}</td>
-                //   <td className="border border-gray-700 p-3">{donacion.benefactor.NombreCompleto}</td>
-                // </tr>
-              ))} */}
-                <tr className="bg-gray-200">
-                  <td className="border border-gray-700 p-3">01/04/23</td>
+              {recojosPorRealizar.map((acopio) => (
+                <tr key={acopio.id}>
+                  <td className="border border-gray-700 p-3">{formatearFecha(acopio.FechaRecoleccion)}</td>
                   <td className="border border-gray-700 p-3">
-                    <button className="text-white bg-gray-500 hover:bg-gray-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline">Ver</button>
+                    <button onClick={() => handleBenefactors(acopio.id)} className="text-white bg-gray-500 hover:bg-gray-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline">Ver</button>
                   </td>
                   <td className="border border-gray-700 p-3">
                     <button className="text-white bg-blue-500 hover:bg-blue-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline">Enviar</button>
@@ -43,6 +71,7 @@ function ListaAcopios({acopios}) {
                     <button className="text-white bg-green-500 hover:bg-green-700 py-1 px-2 rounded focus:outline-none focus:shadow-outline">Recibido</button>
                   </td>
                 </tr>
+              ))}
             </tbody>
           </table>
         </Layout>

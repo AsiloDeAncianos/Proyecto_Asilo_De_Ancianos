@@ -61,4 +61,4 @@ export const getDonacion = (id) => api.get(`donacion/${id}/`);
 
 export const getAllAcopios = () => api.get('recojosprogramados/');
 
-export const getAcopios = (id) => api.get(`recojosprogramados/${id}/`);
+export const getAcopiosById = (id) => api.get(`recojosprogramados/${id}/`);

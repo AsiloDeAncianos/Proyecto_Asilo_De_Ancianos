@@ -2,14 +2,33 @@ import axios from "axios";
 import {Layout} from "../components/Layout";
 import Link from "next/link";
 import { format } from "date-fns";
+import { getAllDonacion, getAllBenefactor } from "./api/backend";
+import { useEffect, useState} from 'react';
 
-function ListaDonaciones({donaciones}) {
+function ListaDonaciones() {
+  const [donacionAll, setDonacionAll] = useState([]);
+  const [benefactorAll, setBenefactorAll] = useState([]);
+
+  useEffect(() => {
+      async function loadData(){
+        const B_res = await getAllBenefactor();
+        const D_res = await getAllDonacion();
+
+        setBenefactorAll(B_res.data);
+        setDonacionAll(D_res.data);
+      }
+      loadData();
+  }, [])
+
+  const donacionFiltrada = donacionAll.filter(donacion =>
+    benefactorAll.some(benefactor => benefactor.id === donacion.Benefactor)
+  );
+
+  const donacionesRecibidas = donacionFiltrada.filter((donacion) => donacion.RecogidaPorAsilo === true);
 
   const formatearFecha = (date) => {
     return format(new Date(date), "yyyy-MM-dd");
   };
-
-  //const donacionesRecibidas = donaciones.filter((donacion) => donacion.RecogidaPorAsilo === 1);
 
   return (
     <>
@@ -25,16 +44,17 @@ function ListaDonaciones({donaciones}) {
               </tr>
             </thead>
             <tbody>
-              {/* {donacionesRecibidas.map((donacion) => (
-                // <tr key={donacion.ID}>
-                //   <td className="border border-gray-700 p-3">{formatearFecha(donacion.FechaRecoleccion)}</td>
-                //   <td className="border border-gray-700 p-3">{donacion.benefactor.NombreCompleto}</td>
-                // </tr>
-              ))} */}
-                <tr className="bg-gray-200">
-                  <td className="border border-gray-700 p-3">01/04/23</td>
-                  <td className="border border-gray-700 p-3">Jorge Lopez</td>
+            {donacionesRecibidas.map((donacion) => {
+              const benefactor = benefactorAll.find((benefactor) => benefactor.id === donacion.Benefactor);
+              const nombreBenefactor = benefactor ? benefactor.NombreCompleto : '';
+
+              return (
+                <tr key={donacion.ID}>
+                  <td className="border border-gray-700 p-3">{formatearFecha(donacion.FechaRecoleccion)}</td>
+                  <td className="border border-gray-700 p-3">{nombreBenefactor}</td>
                 </tr>
+              );
+            })}
             </tbody>
           </table>
 
@@ -54,17 +74,5 @@ function ListaDonaciones({donaciones}) {
     </>
   );
 }
-
-// export const getServerSideProps = async context => {
-//   const {data: donacion} = await axios.get(
-//     'http://localhost:3000/api/donaciones'
-//   )
-
-//   return {
-//     props: {
-//         donaciones,
-//     },
-//   };
-// };
 
 export default ListaDonaciones
